@@ -1,0 +1,61 @@
+﻿支持centos6注意
+	febootstrap和supermin不同
+	
+	http://libguestfs.org/supermin.1.html
+
+
+yum -y install docker-io
+service docker start
+yum -y install febootstrap 制作docker镜像工具  
+第三步：作CentOS镜像文件centos6-image目录
+	  -i 后面的都是基础镜像中安装的一些服务
+		
+      febootstrap -i bash -i wget -i yum -i iputils -i iproute -i man -i vim -i openssh-server -i openssh-clients -i tar -i gzip centos6 centos6-image http://mirrors.aliyun.com/centos/6/os/x86_64/  
+	  
+	  
+	  centos6是指版本，centos6-image是生成的目录名称。
+	  
+	  
+维护root的环境变量
+	  cd centos6-image && cp etc/skel/.bash* root/
+	  
+	  
+	  
+
+cd centos6-image && tar -c .|docker import - centos6-base  
+
+
+
+
+
+
+docker run -d -p 482:8080 -i -t  -v /data/web/:/data/web --name ttd.api_login   registry.cn-hangzhou.aliyuncs.com/okuc/centos6.6-jdk1.7-ssh  /bin/bash
+
+
+docker
+支持centos7
+supermin --prepare bash -o /tmp/supermin.d
+
+		--prepare  安装bash
+		
+		注意检查 supaermin.d   下面的pageckge
+
+		
+supermin --build --format ext2 supermin.d -o appliance.d
+
+添加yum的releasever
+echo 7 > appliance.d/etc/yum/vars/releasever
+
+
+
+打包
+tar --numeric-owner -cpf centos-7.tar -C appliance.d .
+cat centos-7.tar | docker import - kongxx/centos-7
+
+
+维护root的环境变量
+	  cd centos6-image && cp etc/skel/.bash* root/
+
+注意:
+	如果上面prepare安装了openssh-server
+	dockerfile 需要useradd -s /sbin/onlogin -d /var/empty/sshd -r sshd
