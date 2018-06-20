@@ -1,0 +1,195 @@
+ELK搭建记录
+yum -y install java-1.8.0-openjdk-devel
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.4.tar.gz
+tar -xzf elasticsearch-6.2.4.tar.gz
+mv elasticsearch-6.2.4 /usr/local/elasticsearch
+ln -s /usr/local/elasticsearch/bin/elasticsearch /bin/
+cd /usr/local/elasticsearch/
+grep -v "^#" config/elasticsearch.yml
+ cluster.name: test_ELK
+
+ node.name: node-1
+ path.data: /elk/data
+ path.logs: /elk/logs
+ network.host: 0.0.0.0
+ http.port: 9200
+ discovery.zen.ping.unicast.hosts: ["node1",]
+http.cors.enabled: true  #此处两行用作允许插件通讯
+http.cors.allow-origin: "*"
+
+
+
+useradd  elk
+mkdir -p /elk/{data,logs}
+chown -R elk:elk /elk
+chown -R elk:elk /usr/local/elasticsearch
+
+vim config/jvm.options
+-Xms2g
+-Xmx2g
+
+[root@node1 elasticsearch]# vim /etc/sysctl.conf
+vm.max_map_count=655360
+[root@node1 elasticsearch]# vim /etc/security/limits.conf
+* soft nofile 65536
+* hard nofile 131072
+* soft nproc 2048
+* hard nproc 4096
+
+
+su - elk
+bin/elasticsearch -d
+
+安装插件elasticsearch-head
+1/安装nodejs
+直接下载Linux Binaries格式的NodeJs安装包（安装方便）
+
+wget https://nodejs.org/dist/v6.11.2/node-v6.11.2-linux-x64.tar.gz
+解压到指定文件夹
+
+tar -xzvf node-v6.11.2-linux-x64.tar.gz -C /usr/local/
+重命名
+
+mv /usr/local/node-v6.11.2-linux-x64 /usr/local/node-v6.11.2
+配置环境变量
+
+vi /etc/profile
+export NODE_HOME=/usr/local/node-v6.11.2
+export PATH=$NODE_HOME/bin:$PATH
+export NODE_PATH=$NODE_HOME/lib/node_modules
+
+使环境变量生效
+
+source /etc/profile
+查看nodejs是否生效
+
+node -v
+npm -v
+
+git clone git://github.com/mobz/elasticsearch-head.git
+cd elasticsearch-head
+npm install
+grunt server &
+open http://localhost:9100/
+
+
+
+elasticsearch-head@0.0.0 /root/elasticsearch-head
+└── (empty)
+
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^1.0.0 (node_modules/chokidar/node_modules/fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.3: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+npm WARN elasticsearch-head@0.0.0 license should be a valid SPDX license expression
+npm ERR! Linux 3.10.0-514.el7.x86_64
+npm ERR! argv "/usr/local/node-v6.11.2/bin/node" "/usr/local/node-v6.11.2/bin/npm" "install"
+npm ERR! node v6.11.2
+npm ERR! npm  v3.10.10
+npm ERR! code ELIFECYCLE
+
+npm ERR! phantomjs-prebuilt@2.1.16 install: `node install.js`
+npm ERR! Exit status 1
+npm ERR!
+npm ERR! Failed at the phantomjs-prebuilt@2.1.16 install script 'node install.js'.
+npm ERR! Make sure you have the latest version of node.js and npm installed.
+npm ERR! If you do, this is most likely a problem with the phantomjs-prebuilt package,
+npm ERR! not with npm itself.
+npm ERR! Tell the author that this fails on your system:
+npm ERR!     node install.js
+npm ERR! You can get information on how to open an issue for this project with:
+npm ERR!     npm bugs phantomjs-prebuilt
+npm ERR! Or if that isn't available, you can get their info via:
+npm ERR!     npm owner ls phantomjs-prebuilt
+npm ERR! There is likely additional logging output above.
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     /root/elasticsearch-head/npm-debug.log
+npm ERR! code 1
+
+
+wget https://artifacts.elastic.co/downloads/logstash/logstash-6.2.4.tar.gz
+tar -zxf logstash-6.2.4.tar.gz
+mv logstash-6.2.4 /usr/local/logstash
+ln -s /usr/local/logstash/ /bin/
+logstash -e 'input { stdin { } } output { stdout {} }'
+
+
+wget https://artifacts.elastic.co/downloads/kibana/kibana-6.2.4-linux-x86_64.tar.gz
+tar -zxf kibana-6.2.4-linux-x86_64.tar.gz
+mv kibana-6.2.4-linux-x86_64 /usr/local/kibana
+ln -s /usr/local/kibana/bin/kibana /bin/
+cd /usr/local/kibana/
+grep -v "^#"  config/kibana.yml
+server.port: 5601
+
+server.host: "0.0.0.0"
+
+elasticsearch.url: "http://172.16.1.119:9200"
+
+kibana.index: ".kibana"
+
+
+X-pack安装使用
+在Kibana中安装 x-pack ，Kibana停用状态下执行
+[root@elk ~]# cp -a x-pack-6.2.4.zip /usr/local/kibana/
+[root@elk ~]# cd /usr/local/kibana/
+[root@elk kibana]# ./bin/kibana-plugin install file:///usr/local/kibana/x-pack-6.2.4.zip
+
+
+
+./bin/elasticsearch-plugin install x-pack
+vim elasticsearch.yml
+action.auto_create_index: .security,.monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*
+
+
+
+docker run  -h logstash \
+  -d \
+  --restart always \
+  --env LANG=en_US.UTF-8 \
+  --env TZ=Asia/Shanghai \
+  --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
+  -p 9023:22\
+  -v /root/workspace/:/data/  \
+  --name elk_logstash mwteck/centos6:20180101b1 docker-entrypoint.sh
+
+
+
+
+
+scp -P28529 root@182.131.21.66://root/workspace/docker/ttd_online/var/api-admin/var/log/tomcat/* ./api-admin/
+
+./bin/logstash-plugin install logstash-filter-multiline
+
+http://www.iyunw.cn/archives/elk-mei-ri-qing-chu-30-tian-suo-yin-jiao-ben/    #删除30填日志
+
+https://www.elastic.co/guide/en/logstash/current/plugins-filters-mutate.html#plugins-filters-mutate-update    mutate
+
+https://blog.csdn.net/wang_zhenwei/article/details/55510606   #数组范例
+
+
+Flume:
+ wget http://mirrors.hust.edu.cn/apache/flume/1.8.0/apache-flume-1.8.0-bin.tar.gz
+
+
+
+问题： 容器里修改了vi /etc/security/limits.conf 导致用户无法切换
+ 方法：elk          -       nofile          65536   把用户名设置成为某个值就行
+
+问题： ERROR: [1] bootstrap checks failed
+[1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+方法：直接把参数写在物理机
+
+问题：[elk@elk elasticsearch]$ Exception in thread "main" org.elasticsearch.bootstrap.BootstrapException: java.nio.file.AccessDeniedException: /usr/local/elasticsearch/config/elasticsearch.keystore
+Likely root cause: java.nio.file.AccessDeniedException: /usr/local/elasticsearch/config/elasticsearch.keystore
+[elk@elk elasticsearch]$ ls /usr/local/elasticsearch/config/elasticsearch.keystore -l
+-rw-rw---- 1 root root 418 May 15 05:36 /usr/local/elasticsearch/config/elasticsearch.keystore
+方法：[root@elk elasticsearch]# chown elk:elk /usr/local/elasticsearch/config/elasticsearch.keystore
+
+
+问题：注意索引名中不能有大写字母,否则 ES 在日志中会报
+方法：InvalidIndexNameException,但是 Logstash 不会报错,这个错误比较隐晦,也容
+易掉进这个坑中
+
+
+no cached mapping for this field~~~~
+kibana里面更新索引
