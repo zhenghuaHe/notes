@@ -30,4 +30,4 @@ windows工具访问：   svn://172.16.1.241:3690/wlw
 　　　　　如果变了IP,重新定位即可
 
 
-FQA:遇到systemctl启动的就不能访问，可以试试直接/usr/bin/svnserve启动
+ps:遇到systemctl启动的就不能访问，可以试试直接/usr/bin/svnserve启动
