@@ -1,0 +1,33 @@
+目的：centos7上的svn服务器迁徙到另一个服务器
+
+方法：
+１、在新svn服务器上启动svn服务器，新建svn库
+２、导出旧svn服务的备份信息
+３．在新svn服务器上导入信息
+
+第一步：启动服务，新建库
+yum -y install subversion
+svnadmin create /opt/svn_repository/wlw
+＃数据仓库默认账号密码以及权限相关的文件在仓库下的conf目录下（/data/svn/repository/document/conf）的两个文件：authz和passwd。详情请参照网上别人的信息，因为我只是迁移，老svn服务器有现成的
+systemctl start svnserve
+
+２、导出dump文件
+svnadmin dump /opt/svn_repository/wlw >svn_document_dumpfile
+＃会在当前目录下产生一个备份的文件，把它拷贝到新的svn服务器
+
+３、还原
+svnadmin create /opt/svn_repository/wlw
+svnadmin load 　/opt/svn_repository/wlw　　<　/root/svn_document_dumpfile
+
+跑完备份信息，
+1、手动拷贝原来的用户权限配置文件
+2、重启服务
+
+
+windows工具访问：   svn://172.16.1.241:3690/wlw
+
+迁徙过程中如果没有变IP，重新链接即可
+　　　　　如果变了IP,重新定位即可
+
+
+FQA:遇到systemctl启动的就不能访问，可以试试直接/usr/bin/svnserve启动
