@@ -1,0 +1,30 @@
+
+==== 获取镜像
+[source,bash]
+----
+＃创建数据卷
+#!/bin/bash
+
+/usr/bin/docker volume create jenkins_volume
+
+/usr/bin/docker run \
+   -d \
+   --restart always \
+   --env LANG=en_US.UTF-8 \
+   --env TZ=Asia/Shanghai \
+   -h  jenkins \
+   -p 1024:8080 \
+   -p 1025:50000 \
+   --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
+   -v jenkins_volume:/usr/local/jenkins \
+   --name jenkins \
+   jenkins/jenkins:lts
+
+----
+
+
+- 镜像的导出导入
+docker save f45277861b04 > /root/mysql.tar
+
+docker load < /root/mysql.tar
+docker tag f45277861b04 mysql:latest 

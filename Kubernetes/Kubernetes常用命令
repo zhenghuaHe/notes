@@ -1,0 +1,140 @@
+
+yum装1.10.3的源
+name=virt7-docker-common-release
+baseurl=http://cbs.centos.org/repos/virt7-kubernetes-110-release/x86_64/os/
+gpgcheck=0
+
+1.11.1源
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+
+
+
+Kubernetes常用命令：
+
+kubeadm:
+
+
+kubectl:
+
+kubectl [command] [name] [flags]
+
+#查看集群有多少个Node
+kubectl get node
+
+＃查看某个node的详细信息
+kubectl describe node node02
+
+#查看pod信息，看不到有命名空间的pod
+kubectl get pods
+
+#查看所有命名空间的pods
+kubectl get pods --all-namespaces
+
+#查看pod的详细信息
+kubectl describe pod mysql-j2nqc
+
+#查看集群的service的信息
+kubectl get service
+
+#查看集群的rc信息
+kubectl get rc
+
+#通过修改rc的数量控制pod的动态缩放
+kubectl scale rc mysql  --replicas=2
+
+#查看集群的deployment信息
+kubectl get deployment
+
+#通过修改rc的数量控制deployment的动态缩放
+kubectl scale deployment nginx  --replicas=2
+
+#查看describe的详细信息
+kubectl describe deployment nginx
+
+#查看endpoints信息
+kubectl get endpoints
+
+#获取命名空间
+kubectl get namespaces
+
+#查看集群信息
+kubectl cluster-info
+
+
+
+
+# 进入某个 Pod 容器里边的命令行
+kubectl exec -it $app bash
+
+# 查看某个 Pod 的日志
+kubectl logs app
+
+
+
+
+
+
+小笔记：jenkins自动打包发布
+cd /home/jenkins/workspace/Test
+mvn package
+
+[root@node02 ~]# cat /home/dockerfile/jdk8/Dockerfile
+# AlpineLinux open jre 8
+FROM alpine:latest
+
+# Install cURL
+RUN echo -e "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/main\n\
+https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/community" > /etc/apk/repositories
+
+RUN apk --update add curl bash openjdk8-jre-base && \
+      rm -rf /var/cache/apk/*
+
+# Set environment
+ENV JAVA_HOME /usr/lib/jvm/default-jvm
+ENV PATH ${PATH}:${JAVA_HOME}/bin
+
+cd /home/jenkins/workspace/t3-api-alarm-message/target
+[root@node04 target]# cat Dockerfile
+FROM mwteck/jdk:8
+ADD api-alarm-message-0.0.1.jar /opt
+ENTRYPOINT [“java”, “-jar”, “/opt/api-alarm-message-0.0.1.jar”]
+
+cd /home/jenkins/workspace/t3-api-alarm-message/target
+docker build -t mwteck/api/www:dev .   #根据当前文件夹里面的dockerfile生成一个mwteck/api/www:dev镜像
+
+[root@node04 ~]# cat apach.yaml   #构建一个deployment
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: www-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: www
+        track: stable
+    spec:
+      containers:
+      - name: www
+        image: mwteck/api/www:dev
+        ports:
+        - containerPort: 80
+
+
+[root@node04 ~]# kubectl create -f apach.yaml
+deployment.extensions/www-deployment created
+[root@node04 ~]# kubectl get deployment
+NAME               DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+gyw-deployment     2         2         2            0           1h
+nginx-deployment   3         3         3            3           9d
+www-deployment     3         3         3            0           10s
+
+[root@node04 ~]# kubectl scale deployment www-deployment --replicas 0
+deployment.extensions/www-deployment scaled
+[root@node04 ~]# kubectl scale deployment www-deployment --replicas 3
+deployment.extensions/www-deployment scaled

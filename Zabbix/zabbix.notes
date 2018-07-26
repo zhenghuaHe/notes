@@ -1,0 +1,266 @@
+
+
+# zabbix常用术语
+
+主机 (host)
+
+- 一台你想监控的网络设备，用IP或域名表示
+
+主机组 (host group)
+
+- 主机的逻辑组；它包含主机和模板。一个主机组里的主机和模板之间并没有任何直接的关联。通常在给不同用户组的主机分配权限时候使用主机组。
+
+监控项 (item)
+
+- 你想要接收的主机的特定数据，一个度量数据。
+
+触发器 (trigger)
+
+- 一个被用于定义问题阈值和“评估”监控项接收到的数据的逻辑表达式
+
+当接收到的数据高于阈值时，触发器从“OK”变成“Problem”状态。当接收到的数据低于阈值时，触发器保留/返回一个“OK”的状态。
+
+事件 (event)
+
+- 单次发生的需要注意的事情，例如触发器状态改变或发现有监控代理自动注册
+
+异常 (problem)
+
+- 一个处在“异常”状态的触发器
+
+动作 (action)
+
+- 一个对事件做出反应的预定义的操作。
+
+一个动作由操作(例如发出通知)和条件(当时操作正在发生)组成
+
+升级 (escalation)
+
+- 一个在动作内执行操作的自定义场景; 发送通知/执行远程命令的序列
+
+媒介 (media)
+
+- 发送告警通知的手段；告警通知的途径
+
+通知 (notification)
+
+- 利用已选择的媒体途径把跟事件相关的信息发送给用户
+
+远程命令 (remote command)
+
+- 一个预定义好的，满足一些条件的情况下，可以在被监控主机上自动执行的命令
+
+模版 (template)
+
+- 一组可以被应用到一个或多个主机上的实体（监控项，触发器，图形，聚合图形，应用，LLD，Web场景）的集合
+
+模版的任务就是加快对主机监控任务的实施；也可以使监控任务的批量修改更简单。模版是直接关联到每台单独的主机上。
+
+应用 (application)
+
+- 一组监控项组成的逻辑分组
+
+web 场景 (web scenario)
+
+- 利用一个或多个HTTP请求来检查网站的可用性
+
+前端 (frontend)
+
+- Zabbix提供的web界面
+
+Zabbix API
+
+- Zabbix API允许你使用JSON RPC协议来创建、更新和获取Zabbix对象（如主机、监控项、图形和其他）信息或者执行任何其他的自定义的任务
+
+Zabbix server
+
+- Zabbix软件实现监控的核心程序，主要功能是与Zabbix proxies和Agents进行交互、触发器计算、发送告警通知；并将数据集中保存等
+
+Zabbix agent
+
+- 一个部署在监控对象上的，能够主动监控本地资源和应用的程序
+
+Zabbix proxy
+
+- 一个帮助Zabbix Server收集数据，分担Zabbix Server的负载的程序
+
+
+
+
+一共有被动和主动 两种agent模式. 在配置监控项时，你可以选择所需的类型：
+
+Zabbix agent - 被动模式，Zabbix Server向Agent索要数据
+Zabbix agent (active) - 主动模式，Agent主动上报数据给Zabbix Server
+
+
+#基于centos6的docker容器
+#推荐查看官方文档：
+#https://www.zabbix.com/download?zabbix=3.4&os_distribution=centos&os_version=6&db=MySQL
+
+# 安装使用
+
+1、建立容器
+docker run  -h zabbix \
+  -d \
+  --restart always \
+  --env LANG=en_US.UTF-8 \
+  --env TZ=Asia/Shanghai \
+  --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
+  -p 10051:10051 -p 10080:80   -p 10022:22 -p 13306:3306\
+  -v /root/workspace/zabbix:/data/  \
+  --name zabbix mwteck/centos6:20180101b1 docker-entrypoint.sh
+
+
+
+  docker run  -h zabbix \
+  -d \
+  --restart always \
+  --env LANG=en_US.UTF-8 \
+  --env TZ=Asia/Shanghai \
+  --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
+  -p 10052:10051 -p 10081:80   -p 10023:22 -p 13306:3306\
+  -v /root/workspace/zabbix:/data/  \
+  --name zabbix mwteck/centos6:20180101b1 docker-entrypoint.sh
+
+
+
+2、进入容器
+docker exec -it zabbix /bin/bash
+
+环境准备：
+MySQL：5.6
+PHP：5.6 (官方说了5.4版本起步)
+httpd:
+zabbix:
+
+1/引导zabbix3.4的yum源
+rpm -ivh http://repo.zabbix.com/zabbix/3.4/rhel/6/x86_64/zabbix-release-3.4-1.el6.noarch.rpm
+
+2/安装mysql5.6，由于Centos6.5默认安装的版本是5.1的，故要先卸载再安装5.6版本的
+yum remove mysql*
+引导mysql5.6的yum源
+[root@zabbix ~]# vim /etc/yum.repos.d/mysql.repo
+[root@zabbix ~]# cat /etc/yum.repos.d/mysql.repo
+[mysql56]
+name=MySQL 5.6 Community Server
+baseurl=http://repo.mysql.com/yum/mysql-5.6-community/el/6/$basearch/
+enabled=1
+gpgcheck=0
+
+
+yum -y install mysql-community-server
+vim /etc/my.cnf
+
+[mysqld]
+innodb_file_per_table=1
+
+service mysqld start
+chkconfig mysqld on
+ss -ntlsss
+#检查3306是否起来了
+
+3、安装php5.6和Apache服务
+#获取yum源
+rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+#安装下列包（似乎没有php.ini）
+yum -y install httpd php56w php56w-gd php56w-mysqlnd php56w-bcmath php56w-mbstring php56w-xml php56w-ldap php56
+
+或者：
+rpm -ivh http://repo.webtatic.com/yum/el6/latest.rpmy
+yum install php56w php56w-gd php56w-mysql php56w-bcmath php56w-mbstring php56w-xml php56w-ldap
+
+
+
+#编辑php的ini文件（vim /etc/php.ini）并修改一下内容，注意date.timezone一定要写对，否则在配置完zabbix后，显示的界面全部报错
+post_max_size = 16M
+max_execution_time = 300
+max_input_time = 300
+date.timezone = Asia/Shanghai
+always_populate_raw_post_data = -1
+
+
+
+
+4、安装zabbix及配置
+yum -y install zabbix-agent zabbix-server-mysql zabbix-web-mysql
+
+创建zabbix数据库并把导入一些sql表
+mysql_secure_installation   建议执行此命令，给数据库做个初始化
+mysql -uroot -p password
+create database zabbix character set utf8 collate utf8_bin;
+grant all privileges on zabbix.* to zabbix@"%" identified by "zabbix";
+flush privileges;
+exit
+
+
+[root@zabbix ~]# rpm -ql zabbix-server-mysql
+/etc/init.d/zabbix-server
+/etc/logrotate.d/zabbix-server
+/etc/zabbix/zabbix_server.conf
+/usr/lib/zabbix/alertscripts
+/usr/lib/zabbix/externalscripts
+/usr/sbin/zabbix_server_mysql
+/usr/share/doc/zabbix-server-mysql-3.4.9
+/usr/share/doc/zabbix-server-mysql-3.4.9/AUTHORS
+/usr/share/doc/zabbix-server-mysql-3.4.9/COPYING
+/usr/share/doc/zabbix-server-mysql-3.4.9/ChangeLog
+/usr/share/doc/zabbix-server-mysql-3.4.9/NEWS
+/usr/share/doc/zabbix-server-mysql-3.4.9/README
+/usr/share/doc/zabbix-server-mysql-3.4.9/create.sql.gz
+/usr/share/man/man8/zabbix_server.8.gz
+/var/log/zabbix
+/var/run/zabbix
+
+
+#我安装时候这个create.sql.gz文件没有，从别处拷贝的
+zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix
+zcat ./create.sql.gz | mysql -uzabbix -p zabbix
+
+vim /etc/zabbix/zabbix_server.conf
+DBName=zabbix
+DBUser=zabbix
+DBPassword=zabbix
+
+
+mkdir /var/www/zabbix
+cp -a /usr/share/zabbix/*  /var/www/zabbix/
+chown -R apache:apache /var/www/zabbix
+
+#配置/etc/httpd/conf/httpd.conf
+DocumentRoot "/var/www/html/zabbix"
+<Directory "/var/www/html/zabbix">
+ServerName 127.0.0.1
+DirectoryIndex index.html index.html.var index.php
+
+service httpd start
+
+service zabbix-server start
+chkconfig zabbix-server on
+service zabbix-agent start
+chkconfig zabbix-agent on
+
+直接去访问吧
+
+
+
+
+配置客户端：
+rpm -ivh http://repo.zabbix.com/zabbix/3.4/rhel/6/x86_64/zabbix-release-3.4-1.el6.noarch.rpm
+yum -y install zabbix-agent
+grep -v "#" /etc/zabbix/zabbix_agentd.conf
+Server=172.17.0.7  #zabbix_server
+ServerActive=172.17.0.7  #zabbix_server
+Hostname=172.17.0.5
+service zabbix-agent start
+
+rpm -i http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-release-3.4-2.el7.noarch.rpm
+yum install zabbix-agent
+
+
+
+FQA:
+1、为什么看到的主机状态是未启用？
+默认状态是未启用，点一下就启用啦
+
+2、自动发现的hosts主机启用了一会儿又变成未启用？
+时间间隔的问题
