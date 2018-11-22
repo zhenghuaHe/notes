@@ -1,0 +1,21 @@
+- 查看本机nat表
+iptables  -L -n -t nat|grep 192.168.122.9
+
+- 允许端口出去回来
+-A POSTROUTING -s 192.168.122.0/24 ! -d 192.168.122.0/24 -p tcp -j MASQUERADE --to-ports 1024-65535
+-A POSTROUTING -s 192.168.122.0/24 ! -d 192.168.122.0/24 -p udp -j MASQUERADE --to-ports 1024-65535
+
+
+- 删除规则
+iptables -t nat -D PREROUTING -d 218.6.173.7 -p tcp -m tcp --dport 22 -j DNAT --to-destination 192.168.122.143:14322
+
+
+
+
+
+端口转发：118.123.249.180:723转发到10050端口
+iptables -t nat -I PREROUTING -d 118.123.249.180 -p tcp -m tcp --dport 523 -j DNAT --to-destination 192.168.122.5:10050
+
+iptables -t nat -I PREROUTING -d 118.123.249.180 -p tcp -m tcp --dport 623 -j DNAT --to-destination 192.168.122.6:10050
+
+iptables -t nat -I PREROUTING -d 118.123.249.180 -p tcp -m tcp --dport 723 -j DNAT --to-destination 192.168.122.7:10050

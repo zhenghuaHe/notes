@@ -1,0 +1,107 @@
+A免密登录Ｂ：
+
+Ａ执行　ssh-keygen -t rsa：
+$ ssh-keygen -t rsa
+$ ls ~/.ssh/
+会生成：id_rsa       id_rsa.pub
+
+id_rsa.pub放在被链接端（服务器），一般权限为：600
+$ scp id_rsa.pub B:/root/.ssh/
+
+
+B机器：
+$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+id_rsa放在本地,链接可以直接ssh -i　file 指定具体文件登录，权限一般为400
+
+
+
+
+
+
+
+直接指定秘钥的写法：
+[root@0e89511f2422 .ssh]# cat config
+
+Host 139.224.53.233
+    IdentityFile ~/.ssh/chenhong@mwteck
+
+
+Host *.mwteck.com
+#    IdentityFile ~/.ssh/deploybot@mwteck
+IdentityFile ~/.ssh/chenhong@mwteck
+
+Host 182.131.21.66
+    IdentityFile ~/.ssh/docker@mwteck
+    IdentityFile ~/.ssh/cibot@mwteck
+
+Host 218.6.173.7
+    IdentityFile ~/.ssh/docker@mwteck
+    IdentityFile ~/.ssh/cibot@mwteck
+
+Host 172.16.1.*
+    IdentityFile ~/.ssh/docker@mwteck
+    IdentityFile ~/.ssh/cibot@mwteck
+
+Host 106.15.186.173
+    IdentityFile ~/.ssh/mwteck.pem
+
+
+
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: api-admin
+  namespace: pro
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-admin
+        track: stable
+    spec:
+      containers:
+      - name: api-admin
+        image: registry.cn-shanghai.aliyuncs.com/mwteck/api-admin:20180813_1
+        volumeMounts:
+        - name: time
+          mountPath: /etc/localtime
+        - name: log
+          mountPath: /var/log/tomcat
+        - name: config
+          mountPath: /etc/tomcat/server.xml
+        - name: conf
+          mountPath: /data/web/api-admin/ROOT/WEB-INF/classes/config.properties
+        ports:
+          - containerPort: 8080
+      volumes:
+      - name: time
+        hostPath:
+          path: /etc/localtime
+      - name: log
+        hostPath:
+          path: /home/ttd/log/api-admin
+      - name: config
+        hostPath:
+          path: /home/ttd/config/api-admin/server.xml
+      - name: conf
+        hostPath:
+          path: /home/ttd/config/api-admin/config.properties
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-admin
+  namespace: pro
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30212
+  selector:
+    app: api-admin
