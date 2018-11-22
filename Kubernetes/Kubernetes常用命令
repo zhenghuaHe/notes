@@ -65,6 +65,11 @@ kubectl get namespaces
 kubectl cluster-info
 
 
+重载配置文件
+ kubectl replace -f rc-nginx.yaml
+查看详细信息
+ kubectl describe po mysql
+
 
 
 # 进入某个 Pod 容器里边的命令行
@@ -74,67 +79,24 @@ kubectl exec -it $app bash
 kubectl logs app
 
 
+#进入t3命名空间的deployment 下面
+kubectl exec -n t3 -it t3-rabbitmq-646c7ddff8-njs6m   /bin/bash
 
 
 
+kubernetes labels的创建以及使用
+1.创建label
 
-小笔记：jenkins自动打包发布
-cd /home/jenkins/workspace/Test
-mvn package
+kubectl label nodes <node-name> <label-key>=<label-value>
 
-[root@node02 ~]# cat /home/dockerfile/jdk8/Dockerfile
-# AlpineLinux open jre 8
-FROM alpine:latest
-
-# Install cURL
-RUN echo -e "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/main\n\
-https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/community" > /etc/apk/repositories
-
-RUN apk --update add curl bash openjdk8-jre-base && \
-      rm -rf /var/cache/apk/*
-
-# Set environment
-ENV JAVA_HOME /usr/lib/jvm/default-jvm
-ENV PATH ${PATH}:${JAVA_HOME}/bin
-
-cd /home/jenkins/workspace/t3-api-alarm-message/target
-[root@node04 target]# cat Dockerfile
-FROM mwteck/jdk:8
-ADD api-alarm-message-0.0.1.jar /opt
-ENTRYPOINT [“java”, “-jar”, “/opt/api-alarm-message-0.0.1.jar”]
-
-cd /home/jenkins/workspace/t3-api-alarm-message/target
-docker build -t mwteck/api/www:dev .   #根据当前文件夹里面的dockerfile生成一个mwteck/api/www:dev镜像
-
-[root@node04 ~]# cat apach.yaml   #构建一个deployment
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: www-deployment
-spec:
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: www
-        track: stable
-    spec:
-      containers:
-      - name: www
-        image: mwteck/api/www:dev
-        ports:
-        - containerPort: 80
+[root@node05 .kube]# kubectl label nodes node05 node=node05
+node/node05 labeled
 
 
-[root@node04 ~]# kubectl create -f apach.yaml
-deployment.extensions/www-deployment created
-[root@node04 ~]# kubectl get deployment
-NAME               DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-gyw-deployment     2         2         2            0           1h
-nginx-deployment   3         3         3            3           9d
-www-deployment     3         3         3            0           10s
+2.查看labels
 
-[root@node04 ~]# kubectl scale deployment www-deployment --replicas 0
-deployment.extensions/www-deployment scaled
-[root@node04 ~]# kubectl scale deployment www-deployment --replicas 3
-deployment.extensions/www-deployment scaled
+kubectl get nodes -Lsystem/build-node
+
+kubectl get nodes --show-labels
+
+[root@node05 .kube]# kubectl get nodes --show-labels

@@ -27,4 +27,4 @@
 docker save f45277861b04 > /root/mysql.tar
 
 docker load < /root/mysql.tar
-docker tag f45277861b04 mysql:latest 
+docker tag f45277861b04 mysql:latest

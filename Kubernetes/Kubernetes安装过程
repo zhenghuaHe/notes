@@ -68,10 +68,46 @@ ETCD_INITIAL_CLUSTER="master_etcd=http://172.16.1.218:2380"
 yum install https://mirrors.aliyun.com/docker-ce/linux/centos/7/x86_64/stable/Packages/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm  -y
 yum install https://mirrors.aliyun.com/docker-ce/linux/centos/7/x86_64/stable/Packages/docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  -y
 
+systemctl start docker
 
 
 
-3、master节点安装
+yum install -y kubeadm-1.10.5 kubectl-1.10.5 kubelet-1.10.5
+
+
 
 
 ４、
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+脚本安装：
+需要作为node节点或者master节点，分别执行不同的脚本
+
+node节点加入master集群的可以直接复制master下面的/etc/kubernetes到node节点下
+
+ＦＱＡ：如果加入集群的节点加入了集群，但是状态没对，请查看对应的docker镜像在node节点创建了没有。

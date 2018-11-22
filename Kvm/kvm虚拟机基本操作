@@ -3,12 +3,57 @@ kvm虚拟机
 
 
 - 创建kvm虚拟机：
+
+- 直接在能上外网的物理机采用桥接网络模式
 virt-install --virt-type=kvm --name=svn --vcpus=4 --memory=2048 --location=/data/libvirt/iso/CentOS-7-x86_64-DVD-1611.iso --disk path=/data1/libvirt/qcow2/svn.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics vnc --extra-args='console=ttyS0' --force
 
 virt-install --virt-type=[类型] --name=[虚拟机名字] --vcpus=[cpu等信息] --memory=[内存] --location=[iso存放地址] --disk path=[虚拟机文件存放地址]/svn.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics none --extra-args='console=ttyS0' --force
+virt-install --virt-type=kvm --name=vm192168122143 --vcpus=8 --memory=8096 --location=/data/libvirt/iso/CentOS-7-x86_64-DVD-1611.iso --disk path=/data/libvirt/qcow2/vm192168122143.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics none --extra-args='console=ttyS0' --force
 
 
-virt-install --virt-type=kvm --name=172016001221 --vcpus=8 --memory=8096 --location=/data/kvm/iso/CentOS-7-x86_64-DVD-1611.iso --disk path=/data/kvm/qcow2/172016001221.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics vnc --extra-args='console=ttyS0' --force
+- 直接在能上外网的物理机采用net的网络模式
+virt-install --virt-type=kvm --name=tpl_centos7 --vcpus=8 --memory=8096 --location=/data1/libvirt/iso/CentOS-7-x86_64-Minimal-1708.iso \
+--disk path=/data1/libvirt/qcow2/tpl_centos7.qcow2,size=200,format=qcow2 --network network=default --graphics none --extra-args='console=ttyS0' --force
+
+
+- 新建一个磁盘
+qemu-img create -f qcow2 kvm-clone.qcow2 2G
+
+- 克隆
+virt-clone -o 被克隆的虚拟机 -n 新的虚拟机名 -f 新磁盘保存路径
+virt-clone --connect=qemu:///system -o 172016001231 -n 172016001232 -f /data1/libvirt/qcow2/172016001232.qcow2
+
+----
+virt-clone 参数介绍
+Options（一些基本的选项）：
+--version：查看版本
+-h，--help：查看帮助信息
+--connect=URI：连接到虚拟机管理程序 libvirt 的URI
+
+General Option（一般选项）：
+-o ORIGINAL_GUEST, --original=ORIGINAL_GUEST：原来的虚拟机名称
+-n NEW_NAME, --name=NEW_NAME：新的虚拟机名称
+--auto-clone：从原来的虚拟机配置自动生成克隆名称和存储路径。
+-u NEW_UUID, --uuid=NEW_UUID：克隆虚拟机的新的UUID，默认值是一个随机生成的UUID
+
+Storage Configuration（存储配置）：
+-f NEW_DISKFILE, --file=NEW_DISKFILE：指定新的虚拟机磁盘文件
+--force-copy=TARGET：强制复制设备
+--nonsparse：不使用稀疏文件复制磁盘映像
+
+Networking Configuration:（网络配置）
+-m NEW_MAC, --mac=NEW_MAC：设置一个新的mac地址，默认是一个随机的mac
+
+----
+
+
+
+
+－　自动重启
+virsh autostart kvm-name    #设置随宿主机开机自启动
+
+检查在/etc/libvirt/qemu/autostart/下会生成一个（虚拟机名.xml）文件
+virsh autostart --disable kvm-name  #取消随宿主机开机自启动
 
 
 
@@ -43,6 +88,19 @@ virsh start kvm-name
 ２、关闭虚拟机（shutodwn）
 virsh shutdown kvm-name
 
+3、强制关闭虚拟机
+virsh destroy kvm-name
+
+4、删除
+virsh undefine kvm-name
+
+5、彻底删除
+rm /data/libvirt/qcow2/kvm-name.qcow2  # 不建议删除硬盘
+
+
+重载配置
+virsh define /etc/libvirt/qemu/centos7.xml
+
 - 快照与恢复
 
 #qemu-img snapshot -l /kvm/img/test12.qcow2 #查看磁盘快照
@@ -51,6 +109,7 @@ virsh snapshot-create test12 #生成快照
 virsh snapshot-create-as test12 snap1 #自定义快照名
 virsh snapshot-revert test12 snap1    #快照恢复虚拟
 virsh snapshot-delete test12 snapname #删除指定快照
+
 范例：
 [root@mwteck210 ~]# virsh snapshot-list 172016001218
  Name                 Creation Time             State
@@ -109,67 +168,6 @@ Domain snapshot 1530597851 deleted
 
  ----
 
-
-- 克隆虚拟机：
-
-virt-clone 参数介绍
-Options（一些基本的选项）：
---version：查看版本
--h，--help：查看帮助信息
---connect=URI：连接到虚拟机管理程序 libvirt 的URI
-
-General Option（一般选项）：
--o ORIGINAL_GUEST, --original=ORIGINAL_GUEST：原来的虚拟机名称
--n NEW_NAME, --name=NEW_NAME：新的虚拟机名称
---auto-clone：从原来的虚拟机配置自动生成克隆名称和存储路径。
--u NEW_UUID, --uuid=NEW_UUID：克隆虚拟机的新的UUID，默认值是一个随机生成的UUID
-
-Storage Configuration（存储配置）：
--f NEW_DISKFILE, --file=NEW_DISKFILE：指定新的虚拟机磁盘文件
---force-copy=TARGET：强制复制设备
---nonsparse：不使用稀疏文件复制磁盘映像
-
-Networking Configuration:（网络配置）
--m NEW_MAC, --mac=NEW_MAC：设置一个新的mac地址，默认是一个随机的mac
-
-1、查看 kvm 虚拟机
-virsh list
-
-2、停止虚拟机r
-virsh shutdown centos7
-
-3、克隆centos7为centos7_clone (-o:源虚拟机　-n:克隆虚拟机　-f:img镜像文件)
-virt-clone --connect=qemu:///system -o centos7 -n centos7_clone -f /data/libvirt/images/centos7_clone.img
-
-4、查看所有的虚拟机
-virsh list --all
-
-5、启动我们克隆的虚拟机
-virsh start centos7_clone
-
-6、修改网卡配置文件,重启网络即可。
-
-
-- 新建一个磁盘
-qemu-img create -f qcow2 kvm-clone.qcow2 2G
-
-
-
-
-
-- 删除虚拟机：
-
-１、停掉虚拟机
-virsh shutdown kvm-name
-
-２、强制关闭
-virsh destroy kvm-name
-
-３、删除
-virsh undefine kvm-name
-
-４、
-rm /dev/vg_shkvm1/kvm-name  # 不建议删除硬盘
 
 
 

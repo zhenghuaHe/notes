@@ -7,6 +7,17 @@ flush privileges;
 远程备份：
 mysqldump -h172.16.1.200 -P2000 -uttd -pmFnzGYwHlepMzDR8wJxG  ttd >ttd_back.sql
 
+指定表备份
+mysqldump -u user -p db tab1 tab2 > db.sql
+恢复
+mysql -u user -p db < db.sql
+
+备份整个数据库     -->     mysqldump db1 >/backup/db1.20060725
+压缩备份              -->     mysqldump db1 | gzip >/backup/db1.20060725
+分表备份              -->     mysqldump db1 tab1 tab2 >/backup/db1_tab1_tab2.sql
+直接远程备份        -->    mysqladmin -h boa.snake.net create db1
+                           -->     mysqldump db1 | mysql -h boa.snake.net db1
+
 
 
 - 链表查询
@@ -20,3 +31,14 @@ RIGHT JOIN（右连接）：与 LEFT JOIN 相反，取得右表（table2）完�
 SELECT * FROM table01 as a INNER JOIN table02 AS b ON a.id=b.id;
 SELECT * FROM table01 AS a LEFT JOIN table02 AS b ON a.id=b.id;
 SELECT * FROM table02 AS a RIGHT JOIN table01 AS b ON a.id=b.id;
+
+
+
+
+- mysql 查看锁表解锁
+-- 查看那些表锁到了
+show OPEN TABLES where In_use > 0;
+-- 查看进程号
+show processlist;
+--删除进程
+ kill 1085850；

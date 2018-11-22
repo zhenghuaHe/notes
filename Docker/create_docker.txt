@@ -24,6 +24,7 @@ docker run  -h hostname -p  0.0.0.0:5222:22 -p 0.0.0.0:5002:8080 -it  -v /data/w
 　　-v 将本机（虚拟机）的 /niloay/software 挂载到 容器的 /mnt/software目录中
 
 　　--name 容器的名字为appcentos
+ls
 
 　　centos 是上面安装的镜像
 
