@@ -93,6 +93,8 @@ docker  run -itd --name api-warp-drive -p 18014:8080  -v /etc/localtime:/etc/loc
 
 
 
+docker  run -itd --name api-vcube-python -p 8888:8888  -v /etc/localtime:/etc/localtime -v /home/ttd/api-vcube-python/configs/:/data/web/api-vcube-python/configs/   -v /home/ttd/api-vcube-python/log/:/data/web/api-vcube-python/var/log/  --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/t4:api_vcube_python
+
 
 
 

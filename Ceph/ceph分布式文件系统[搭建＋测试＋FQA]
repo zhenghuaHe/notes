@@ -22,7 +22,7 @@ admin-node      172.16.3.37              admin
 hostnamectl set-hostname yourname
 vim /etc/hosts
 ----
-分别在里面加入
+分别在里面加入cluster name
 [source,text]
 ----
 172.16.3.38 node1

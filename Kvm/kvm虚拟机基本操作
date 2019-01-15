@@ -8,7 +8,8 @@ kvm虚拟机
 virt-install --virt-type=kvm --name=svn --vcpus=4 --memory=2048 --location=/data/libvirt/iso/CentOS-7-x86_64-DVD-1611.iso --disk path=/data1/libvirt/qcow2/svn.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics vnc --extra-args='console=ttyS0' --force
 
 virt-install --virt-type=[类型] --name=[虚拟机名字] --vcpus=[cpu等信息] --memory=[内存] --location=[iso存放地址] --disk path=[虚拟机文件存放地址]/svn.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics none --extra-args='console=ttyS0' --force
-virt-install --virt-type=kvm --name=vm192168122143 --vcpus=8 --memory=8096 --location=/data/libvirt/iso/CentOS-7-x86_64-DVD-1611.iso --disk path=/data/libvirt/qcow2/vm192168122143.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics none --extra-args='console=ttyS0' --force
+virt-install --virt-type=kvm --name=vm192168122143 --vcpus=8 --memory=8096 --location=/data/libvirt/iso/CentOS-7-x86_64-DVD-1611.iso --disk path=/data/libvirt/qcow2/vm192168122143.qcow2,size=200,format=qcow2 --network bridge=br_wan --graphics none --extra-args='co
+nsole=ttyS0' --force
 
 
 - 直接在能上外网的物理机采用net的网络模式
@@ -21,7 +22,7 @@ qemu-img create -f qcow2 kvm-clone.qcow2 2G
 
 - 克隆
 virt-clone -o 被克隆的虚拟机 -n 新的虚拟机名 -f 新磁盘保存路径
-virt-clone --connect=qemu:///system -o 172016001231 -n 172016001232 -f /data1/libvirt/qcow2/172016001232.qcow2
+virt-clone --connect=qemu:///system -o 172016001231 -n 172016001232 -f /data1/libvirt/qcow2/172016001232.qcow2      #不需要提前创建磁盘文件
 
 ----
 virt-clone 参数介绍

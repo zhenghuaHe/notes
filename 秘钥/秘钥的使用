@@ -5,6 +5,8 @@ $ ssh-keygen -t rsa
 $ ls ~/.ssh/
 会生成：id_rsa       id_rsa.pub
 
+$ ssh-copy-id 172.16.1.224
+
 id_rsa.pub放在被链接端（服务器），一般权限为：600
 $ scp id_rsa.pub B:/root/.ssh/
 
@@ -67,7 +69,7 @@ spec:
         image: registry.cn-shanghai.aliyuncs.com/mwteck/api-admin:20180813_1
         volumeMounts:
         - name: time
-          mountPath: /etc/localtime
+          mountPath: /etc/localtime/data
         - name: log
           mountPath: /var/log/tomcat
         - name: config

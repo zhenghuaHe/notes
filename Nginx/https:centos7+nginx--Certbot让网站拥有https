@@ -1,10 +1,14 @@
 
 因公司发展需要，需要给公司的网站访问做上https,详细步骤如下：
 
+参考：
+http://www.cnblogs.com/one-villager/p/certbot_build_https.html
+安装教程：https://certbot.eff.org/#centos6-nginx
+
 $ yum install epel-release -y
 $ wget https://dl.eff.org/certbot-auto　　　＃获取
 $ chmod a+x ./certbot-auto　　　　　　　　　　　#赋予权限
-$ /root/certbot-auto certonly --email hezhenghua@mwteck.com --agree-tos --no-eff-email  -d hzh.ettda.net　　　　#换成自己的域名即可
+$ 1　　　　#换成自己的域名即可
 How would you like to authenticate with the ACME CA?
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 1: Apache Web Server plugin (apache)
