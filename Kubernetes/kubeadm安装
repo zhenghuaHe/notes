@@ -46,6 +46,19 @@ error execution phase preflight: [preflight] Some fatal errors occurred:
 
 
 
+ mv sa.pub /etc/kubernetes/pki/
+ mv sa.key /etc/kubernetes/pki/
+ mv front-proxy-ca.crt /etc/kubernetes/pki/
+ mv front-proxy-ca.key /etc/kubernetes/pki/
+ mv etcd-ca.crt /etc/kubernetes/pki/etcd/ca.crt
+ mv etcd-ca.key /etc/kubernetes/pki/etcd/ca.key
+ mv admin.conf /etc/kubernetes/admin.con
+
+
+
+
+
+
 kubeadm init --kubernetes-version=v1.13.2 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --apiserver-advertise-address=0.0.0.0 --ignore-preflight-errors=Swap
 
 

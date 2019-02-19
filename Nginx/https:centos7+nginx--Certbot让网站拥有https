@@ -8,7 +8,10 @@ http://www.cnblogs.com/one-villager/p/certbot_build_https.html
 $ yum install epel-release -y
 $ wget https://dl.eff.org/certbot-auto　　　＃获取
 $ chmod a+x ./certbot-auto　　　　　　　　　　　#赋予权限
-$ 1　　　　#换成自己的域名即可
+
+
+
+$ ./certbot-auto certonly --nginx --email xxxx@gmail.com --webroot -w /data/vhosts/xttan.com/wordpress -d www.xttan.com　　　　#换成自己的域名即可
 How would you like to authenticate with the ACME CA?
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 1: Apache Web Server plugin (apache)
