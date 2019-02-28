@@ -46,3 +46,30 @@ docker tag f45277861b04 mysql:latest
   docker tag ca1f38854f74 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler-amd64:v1.11.3
   docker tag b3b94275d97c registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:1.1.3
   docker tag da86e6ba6ca1 registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1
+
+
+  docker save ab60b017e34f > kube-apiserver-amd64.tar
+  docker save  07e068033cf2 > kube-controller-manager-amd64.tar
+  docker save 9c3a9d3f09a0 > kube-proxy-amd64.tar
+  docker save  5a1527e735da > kube-scheduler-amd64.tar
+
+docker tag 9c3a9d3f09a0 k8s.gcr.io/kube-proxy-amd64:v1.12.0
+docker tag ab60b017e34f k8s.gcr.io/kube-apiserver-amd64:v1.12.0
+docker tag 07e068033cf2 k8s.gcr.io/kube-controller-manager-amd64:v1.12.0
+docker tag 5a1527e735da k8s.gcr.io/kube-scheduler-amd64:v1.12.0
+
+
+
+
+
+docker tag e9a1134ab5aa k8s.gcr.io/kube-proxy-amd64:v1.11.7
+docker tag d82b2643a56a k8s.gcr.io/kube-apiserver-amd64:v1.11.7
+docker tag 93fb4304c50c k8s.gcr.io/kube-controller-manager-amd64:v1.11.7
+docker tag 52ea1e0a3e60 k8s.gcr.io/kube-scheduler-amd64:v1.11.7
+
+
+
+docker rmi k8s.gcr.io/kube-proxy:v1.11.7
+docker rmi k8s.gcr.io/kube-apiserver:v1.11.7
+docker rmi k8s.gcr.io/kube-controller-manager:v1.11.7
+docker rmi k8s.gcr.io/kube-scheduler:v1.11.7
