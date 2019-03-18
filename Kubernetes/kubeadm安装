@@ -1,3 +1,33 @@
+
+
+准备：
+
+systemctl stop firewalld
+systemctl disable firewalld
+
+setenforce  0
+sed -i "s/^SELINUX=enforcing/SELINUX=disabled/g" /etc/sysconfig/selinux
+sed -i "s/^SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 阿里的镜像源：
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]

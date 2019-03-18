@@ -22,6 +22,8 @@
 
 ----
 
+#查看里是版本
+yum --showduplicate list docker-ce
 
 #安装指定版本
 yum makecache fast && yum -y install docker-ce-18.06.0.ce-3.el7
