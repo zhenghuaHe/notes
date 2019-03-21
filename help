@@ -1,0 +1,75 @@
+
+生产
+http://admin.maintenance.ettda.com
+mouwanpeng
+1qaz2wsxM
+
+T1测试
+http://admin.t1.ettda.com
+
+t1测试环境数据库
+172.16.1.200:2000
+ttd
+mFnzGYwHlepMzDR8wJxG
+
+t2测试环境数据库
+172.16.1.210:1027
+ttd
+mFnzGYwHlepMzDR8wJxG
+
+t3测试环境数据库
+172.16.1.210:3306
+ttd
+ROOT@mwteck123
+
+
+任务调度平台
+https://job.2012iot.com/xxl-job-admin/
+admin
+RXnETZVp6EAON9n52M
+
+api管理平台
+http://xxl-api.2012iot.com/toLogin
+mouwanpeng
+mwteck
+
+api管理平台数据库
+root
+mwteck@2018
+
+代理服务器阿里云地址
+rmgt -n mwteck.ecs74 -o linux -i 47.74.21.74 -p28529 -u root -d "中景 ECS 47.74.21.74"i
+
+zabbix地址
+218.6.173.7:10080/zabbix
+admin
+zabbix
+
+Jenkins地址
+http://172.16.1.210:1024
+root
+mwteck
+
+
+梯视达
+http://p2.liftdatav.2012iot.com/#/index
+http://p1.liftdatav.2012iot.com/#/index
+
+
+DB_HOST3 = '172.16.1.200'
+DB_PORT3 = '3306'
+DB_NAME3 = 'ttd_20180826005602'
+DB_USER3 = 'root'
+DB_PASSWD3 = 'zjwl@IRMKYBH1jKh1F'
+
+mysql_host = 172.16.1.210
+mysql_port = 3306
+mysql_user = ttd
+mysql_pwd = ROOT@mwteck123
+mysql_db = ttd
+
+
+ftp地址
+172.16.1.6
+mwteck
+mwteck@2018

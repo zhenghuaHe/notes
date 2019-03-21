@@ -1,0 +1,16 @@
+
+
+https://www.python.org/ftp/python/3.5.6/Python-3.5.6.tgz
+
+tar -xzvf Python-3.5.6.tgz
+
+cd Python-3.5.6/
+
+sudo pacman -S gcc
+
+./configure --prefix=/usr/local/python3
+make && make install
+
+rm -rf /sbin/python3
+ln -s /usr/local/python3/bin/python3.5 /sbin/python3
+ln -s /usr/local/python3/bin/pip3 /sbin/pip3
