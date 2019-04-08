@@ -1,86 +1,18 @@
+由于业务需要，MySQL版本从5.6升级到5.7
 
-182.131.21.66 root 43306　　EwJXjlwIRMKYBH1jKh1F
-218.6.173.7 root 43306  zjwl@IRMKYBH1jKh1F
+升级步骤：
 
-200 zjwl@IRMKYBH1jKh1F
-
-
-
-１、代码上线
-源代码：210服务器上端口号为1061的docker容器，文件目录：/data/web/api-data-analysis/
-上线到：66服务器上的/data/web/api-data-analysis/application-prod.yml
-修改配置文件mysql、redis、mq等配置
-
-
+1、对mysql5.6进行全库备份（******）用于失败倒回
+2、关闭mysql5.6版本数据库
+3、将mysql5.7软件部署
+4、修改配置信息
+5、修改启动脚本
+6、启动mysql5.7数据库
+7、mysql_upgrade升级数据库相关参数
+8、重启数据库，测试升级结果
 
 
-
-
-
-
-２、数据库升级
-
-
-备份数据库：
-66上链接：
-mysql  -h127.0.0.1 -P43306 -uroot -p
-
-mysqldump -u 用户名 -p 数据库名 > 导出的文件名
-mysqldump -P43306 -u root -pEwJXjlwIRMKYBH1jKh1F ttd > ttd_bak.sql
-mysqldump -P43306 -u root -pEwJXjlwIRMKYBH1jKh1F iot > iot_bak.sql
-mysqldump -P43306 -u root -pEwJXjlwIRMKYBH1jKh1F tsd > tsd_bak.sql
-
-7上：
-mysql  -h127.0.0.1 -P43306 -uroot -p
-导入数据库：
-mysql -u账号 -p密码 < 备份集路径/备份集名字.sql
-mysql -P43306 -uroot -pzjwl@IRMKYBH1jKh1F < ttd_bak.sql
-mysql -P43306 -uroot -pzjwl@IRMKYBH1jKh1F < iot_bak.sql
-mysql -P43306 -uroot -pzjwl@IRMKYBH1jKh1F < tsd_bak.sql
-
-
-给予用户权限：
-root:
-grant all privileges on *.* to　'root'@'182.131.21.66' identified by 'zjwl@IRMKYBH1jKh1F' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'218.6.173.7' IDENTIFIED BY 'zjwl@IRMKYBH1jKh1F' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.21.0.%' IDENTIFIED BY 'zjwl@IRMKYBH1jKh1F' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY 'zjwl@IRMKYBH1jKh1F' WITH GRANT OPTION;
-flush privileges;
-
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'182.131.21.66' IDENTIFIED BY 'zjwl@IRMKYBH1jKh1F' WITH GRANT OPTION;
-
-
-
-ttd:
-GRANT ALL PRIVILEGES ON  ttd.* TO 'ttd'@'218.6.173.7' IDENTIFIED BY 'zjwl@IRMKYBH1jKh1F' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON  ttd.* TO 'ttd'@'172.21.0.%' IDENTIFIED BY 'zjwl@IRMKYBH1jKh1F' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON  ttd.* TO 'ttd'@'127.0.0.1' identified by 'zjwl@IRMKYBH1jKh1F';
-flush privileges;
-
-tsd:
-GRANT ALL PRIVILEGES ON  tsd.* TO 'tsd'@'127.0.0.1'   identified by 'zjwl@IRMKYBH1jKh1F';
-GRANT ALL PRIVILEGES ON  tsd.* TO 'tsd'@'182.131.21.66' identified by 'zjwl@IRMKYBH1jKh1F';
-GRANT ALL PRIVILEGES ON  tsd.* TO 'tsd'@'218.6.173.7' identified by 'zjwl@IRMKYBH1jKh1F';
-grant all privileges on  tsd.* to　'tsd'@'172.21.0.%' identified by 'zjwl@IRMKYBH1jKh1F';
-flush privileges;
-
-ttd_onlyread:
-GRANT select ON  ttd.* TO 'ttd_onlyread'@'127.0.0.1'   identified by 'zjwl@IRMKYBH1jKh1F';
-GRANT select ON  ttd.* TO 'ttd_onlyread'@'182.131.21.66' identified by 'zjwl@IRMKYBH1jKh1F';
-GRANT select ON  ttd.* TO 'ttd_onlyread'@'218.6.173.7' identified by 'zjwl@IRMKYBH1jKh1F';
-grant select on  ttd* to　'ttd_onlyread'@'172.21.0.%' identified by 'zjwl@IRMKYBH1jKh1F';
-flush privileges;
-
-iot:
-GRANT ALL PRIVILEGES ON  iot.* TO 'iot'@'localhost'   identified by 'zjwl@IRMKYBH1jKh1F';
-GRANT ALL PRIVILEGES ON  iot.* TO 'iot'@'127.0.0.1'   identified by 'zjwl@IRMKYBH1jKh1F';
-GRANT ALL PRIVILEGES ON  iot.* TO 'iot'@'182.131.21.66' identified by 'zjwl@IRMKYBH1jKh1F';
-GRANT ALL PRIVILEGES ON  iot.* TO 'iot'@'218.6.173.7' identified by 'zjwl@IRMKYBH1jKh1F';
-grant all privileges on  iot.* to　'iot'@'172.21.0.%' identified by 'zjwl@IRMKYBH1jKh1F';
-flush privileges;
-
-
-只读权限：
-grant select on ttd.* to tsd@"%" identified by "zjwl@IRMKYBH1jKh1F";
-grant insert,update on tsd.* to root@"%" identified by "zjwl@IRMKYBH1jKh1F";
-grant select, insert, update, delete on iot.* to root@"%" identified by "zjwl@IRMKYBH1jKh1F";
+注意点：
+1、提前了解两个版本的不同之处，好有所准备
+2、注意配置文件的变化
+3、导出数据库时注意，不带那个啥格式的参数，不然导入要报错

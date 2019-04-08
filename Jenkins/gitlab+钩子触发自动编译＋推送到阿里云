@@ -14,8 +14,9 @@ jenkins上：
 本地测试环境：
 创建一个maven项目－－选择限制项目的运行节点　－－git (配置：地址＋秘钥＋分支名字)－－构建触发器（build gitlab url--Filter branches by name(取名字分支731)－－点击Ｇenerate 生成git 所需的token ）
 build(ttdk8s+pom.xml+clean package)
+
 post steps 执行shell命令：
-docker login --username=mwteck2016 --password=MWteck@2018 registry.cn-shanghai.aliyuncs.com
+docker login --username=mwteck2016 --password=xxxx registry.cn-shanghai.aliyuncs.com
 cd /home/jenkins/workspace/t3-api-admin/target
 docker build -t mwteck/api/admin:dev .
 kubectl scale --replicas=0 deployment/api-admin -n t3
