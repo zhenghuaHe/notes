@@ -87,7 +87,7 @@ docker  run -itd --name api-blue-whale -p 18012:9090  -v /etc/localtime:/etc/loc
 
 
 曲速引擎：   记得创建目录
-docker login --username=mwteck2016 --password=MWteck@2018 registry.cn-shanghai.aliyuncs.com
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
 docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api-warp-drive:20180917_14
 docker  run -itd --name api-warp-drive -p 18014:8080  -v /etc/localtime:/etc/localtime -v /home/ttd/api-warp-drive/configs/:/data/web/api-warp-drive/configs/   -v /home/ttd/api-warp-drive/log/:/data/web/api-warp-drive/var/log/ -v /home/ttd/api-warp-drive/excel_file:/data/web/api-warp-drive/excel_file/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api-warp-drive:20180919_19
 
@@ -100,12 +100,12 @@ docker  run -itd --name api-vcube-python -p 8888:8888  -v /etc/localtime:/etc/lo
 
 
 同步程序：
-docker login --username=mwteck2016 --password=MWteck@2018 registry.cn-shanghai.aliyuncs.com
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
 docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_2012iot_statistics_python:20180918_16
 docker  run -itd --name api-python-statistics   -v /etc/localtime:/etc/localtime -v /home/ttd/api-2012iot-statistics-python/configs/:/data/web/api-2012iot-statistics-python/configs/  -v /home/ttd/api-2012iot-statistics-python/log/:/data/web/api-2012iot-statistics-python/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_2012iot_statistics_python:20180919_15
 
 大数据平台设备中心
-docker login --username=mwteck2016 --password=MWteck@2018 registry.cn-shanghai.aliyuncs.com
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
 docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_bigdatadevicecenter:20180919_15
 docker  run -itd --name api-bigdatadevicecenter -p 18015:8080  -v /etc/localtime:/etc/localtime -v /home/ttd/api-bigdatadevicecenter/configs/:/data/web/api-bigdatadevicecenter/configs/  -v /home/ttd/api-bigdatadevicecenter/log/:/data/web/api-bigdatadevicecenter/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_bigdatadevicecenter:20180919_15
 
@@ -113,13 +113,13 @@ docker  run -itd --name api-bigdatadevicecenter -p 18015:8080  -v /etc/localtime
 
 
 redis-tools:
-docker login --username=mwteck2016 --password=MWteck@2018 registry.cn-shanghai.aliyuncs.com
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
 docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_redis_tools:20180928_16
 docker  run -itd --name api_redis_tools   -v /etc/localtime:/etc/localtime -v /home/ttd/api-redis-tools/configs/:/data/web/api-redis-tools/configs/  -v /home/ttd/api-redis-tools/log/:/data/web/api-redis-tools/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_redis_tools:20180928_15
 
 
 api-cache:
-docker login --username=mwteck2016 --password=MWteck@2018 registry.cn-shanghai.aliyuncs.com
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
 docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_cache:20181008_15
 docker  run -itd --name api_cache_sync   -v /etc/localtime:/etc/localtime -v /home/ttd/api-cache-sync/configs/:/data/web/api-cache-sync/configs/  -v /home/ttd/api-cache-sync/log/:/data/web/api-cache-sync/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_cache:20181008_15
 

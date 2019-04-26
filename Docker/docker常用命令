@@ -22,7 +22,11 @@
 
 ----
 
-#查看里是版本
+docker  run -itd -p 2024:8080 -p 2025:50000 --name jenkins_pro  -v /etc/localtime:/etc/localtime -v /home/jenkins-home-docker:/var/jenkins_home --restart=always jenkins/jenkins:lts
+
+docker run -tid --name emqx -p 1883:1883 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 -v /etc/localtime:/etc/localtime --restart=always emqx/emqx:latest
+
+#查看历史版本
 yum --showduplicate list docker-ce
 
 #安装指定版本

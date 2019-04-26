@@ -1,0 +1,15 @@
+内容：
+迁移容器同时涉及到了上面两个操作，备份和恢复。
+我们可以将任何一个Docker容器从一台机器迁移到另一台机器。在迁移过程中，首先我们将把容器备份为Docker镜像快照。
+然后，该Docker镜像或者是被推送到了Docker注册中心，或者被作为tar包文件保存到了本地。
+如果我们将镜像推送到了Docker注册中心，我们简单地从任何我们想要的机器上使用 docker run 命令来恢复并运行该容器。但是，如果我们将镜像打包成tar包备份到了本地，我们只需要拷贝或移动该镜像到我们想要的机器上，加载该镜像并运行需要的容器即可。
+
+#把需要备份的容器变成镜像
+$ docker commit -p docker-name container-backup
+#查看自己生成的镜像
+$ docker images
+#镜像打包然后传给需要跑的主机
+$ docker save 190e4be35f9d > docker.tar
+
+#在需要跑的主机上重读出来，运行起来
+$ docker load < docker.tar

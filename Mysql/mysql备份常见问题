@@ -1,0 +1,11 @@
+
+常见的备份方法：mysqldump　、　xtrabackup(热备份)
+
+mysqldump命令适用于对数据库相对较小的MySQL进行备份，一般数据量约50GB以内，大于50GB强烈建议使用xtrabackup工具。
+
+mysqldump备份，如果有插入、修改操作，必然会锁表，可加入--skip-opt参数解决,
+
+
+
+
+主从复制环境，从库的i/o在干什么？
