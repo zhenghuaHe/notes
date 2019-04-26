@@ -3,4 +3,4 @@
 
 ## 二级标题
 
-## ![atomtest](/home/he/Pictures/wangzai.jpg)
+## ![atomtest](./Map/wangzai.jpg)
