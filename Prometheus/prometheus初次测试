@@ -1,12 +1,8 @@
+## 1、直接创建docker容器
+$ docker run -h Prometheus -d -p 9090:9090　-p 9100:9100　-it　--name Prometheus registry.cn-shanghai.aliyuncs.com/mwteck/base:centos6  /bin/bash
 
-
-
-
-
-docker run -h Prometheus -d -p 9090:9090  -p 9100:9100     -it  --name Prometheus registry.cn-shanghai.aliyuncs.com/mwteck/base:centos6  /bin/bash
-
-二进制安装：
-
+## ２、二进制安装：
+***
 $ yum install go
 $ go version
 go version go1.9.4 linux/amd64
@@ -30,6 +26,7 @@ $ vim prometheus.yml
       - targets: ['172.16.1.221:9100']
         labels:
           instance: os_centos
+***
 验证成功：ip+9090
 
 
@@ -98,6 +95,11 @@ from_address = mwteck@mwteck.com
 from_name = Grafana
 
 Alerting -->Notification channels --> 添加个收件箱就行
+
+
+
+
+
 
 
 
