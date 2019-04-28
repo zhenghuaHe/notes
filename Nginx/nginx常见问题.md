@@ -9,7 +9,7 @@
 
 # 简述nginx reload的过程
 
-## ![atomtest][nginx_reload]
+## ![atom_nginx](./Map/nginx_reload.png)
 * 原理：
     > nginx -s reload　的过程：服务不会中断。
 原来的连接不变，等他关闭了连接自动消失。reload之后会产生新的线程带着新读取的配置文件内容来响应请求，连接数较多的时候建议等访问少的时候进行reload。
