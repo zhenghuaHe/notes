@@ -264,5 +264,5 @@ rsync error: some files/attrs were not transferred (see previous errors) (code 2
 
 
 * 参考博客：
-1. cygwin的一些细节操作：http://oldratlee.com/post/2012-12-22/stunning-cygwin
-2. 学长M19-吴昊 ：https://blog.whsir.com/post-category/linux/rsync （windows server 2008服务器使用（软件包下载） +linux的守护进程使用）
+1. cygwin的一些细节操作：<http://oldratlee.com/post/2012-12-22/stunning-cygwin>
+2. 学长M19-吴昊 ：<https://blog.whsir.com/post-category/linux/rsync> （windows server 2008服务器使用（软件包下载） +linux的守护进程使用）
