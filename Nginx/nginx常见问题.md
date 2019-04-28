@@ -1,10 +1,21 @@
 # 总结一些常见的nginx相关的问题
 ***
+* nginx架构图
+## ![master](../Map/nginx架构图.png)
+
+
+
+* nginx的功用
+1. 结合FastCGI/uwSGI/SCGI等协议反代动态资源请求；(也可以缓存动态资源)
+2. http/https协议的反向代理；
+3. imap4/pop3协议的反抽代理；
+4. tcp/udp协议的反代；
+5. 静态的web资源服务器；
+
 
 * nginx启动时，会启动两个进程： 一个是Master进程(主进程)和worker进程(工作进程)
-
-# nginx的工作模型
-
+    > master负责加载配置文件、管理worker进程、平滑升级
+    > worker处理并响应用户请求
 
 
 # 简述nginx reload的过程
