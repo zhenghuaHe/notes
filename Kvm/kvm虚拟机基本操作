@@ -104,6 +104,7 @@ virsh define /etc/libvirt/qemu/centos7.xml
 
 - 快照与恢复
 
+#test12:kvm-name snap1:快照名
 #qemu-img snapshot -l /kvm/img/test12.qcow2 #查看磁盘快照
 virsh snapshot-list test12 #查看快照
 virsh snapshot-create test12 #生成快照

@@ -5,7 +5,7 @@ $ ntpdate asia.pool.ntp.org
 
 #加入定时任务
 $ crontab -e
-*/10 * * * * ntpdate asia.pool.ntp.org
+*/10 * * * * ntpdate asia.pool.ntp.org >>/dev/null
 
 $推荐几个时间服务器
 time.nist.gov
