@@ -155,6 +155,10 @@ echo "vm.swappiness = 1" >>  /etc/sysctl.conf
 
 2. Clock Offset 。测试主机时钟与其 NTP 服务器之间的偏差。
 
-3.
+3. 集群安装报错      ERROR  Failure due to stall on seeded torrent.
 
-4.
+解决：重启agent服务
+4. 重装时hdfs提示目录已存在
+rm -rf /dfs
+
+rm -rf /impala/
