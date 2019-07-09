@@ -4,6 +4,16 @@
 grant all privileges on *.* to root@"%" identified by '123456';
 flush privileges;
 
+
+- mysql 查看锁表解锁
+-- 查看那些表锁到了
+show OPEN TABLES where In_use > 0;
+-- 查看进程号
+show processlist;
+--删除进程
+ kill 1085850；
+　
+
 远程备份：
 mysqldump -h172.16.1.200 -P2000 -uttd -pmFnzGYwHlepMzDR8wJxG  ttd >ttd_back.sql
 
@@ -31,14 +41,3 @@ RIGHT JOIN（右连接）：与 LEFT JOIN 相反，取得右表（table2）完�
 SELECT * FROM table01 as a INNER JOIN table02 AS b ON a.id=b.id;
 SELECT * FROM table01 AS a LEFT JOIN table02 AS b ON a.id=b.id;
 SELECT * FROM table02 AS a RIGHT JOIN table01 AS b ON a.id=b.id;
-
-
-
-
-- mysql 查看锁表解锁
--- 查看那些表锁到了
-show OPEN TABLES where In_use > 0;
--- 查看进程号
-show processlist;
---删除进程
- kill 1085850；

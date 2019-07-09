@@ -53,6 +53,15 @@ exclude = paichu/
 comment = this is rsyncd.server test
 ```
 
+```
+测试连接：
+rsync --port 52053   47.100.238.223::
+
+启动服务的命令是：rsync --daemon
+默认去使用/etc/rsyncd.conf这个配置文件，也可以指定配置文件 rsync --daemon --config=/etc/rsyncd2.conf，更改配置文件不用重启服务，即时生效。
+
+```
+
 ### 1.1.2 client端配置
 ```
 #test目录为例
@@ -160,7 +169,7 @@ chown user:group  workspace
 
 .FAQ（IP以10.10.10.10代替）：
 
-错误一：
+错误一：/data/backup/mysql/data/backup/mysql
 ```
 password file must not be other-accessible
 continuing without password file
