@@ -1,8 +1,7 @@
-api-device.yaml
+# 参考范例
 
-
-
-
+```
+$ cat api-device.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -55,8 +54,9 @@ spec:
         hostPath:
           path: /home/config/api-device/config.properties
 
----
 
+# nodePort类型
+$ cat api-device-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -70,3 +70,18 @@ spec:
     nodePort: 30214
   selector:
     app: api-device
+#　ClusterIP类型
+$ cat api-device-service.yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: api-device
+      namespace: dev
+    spec:
+      type: ClusterIP
+      ports:
+      - port: 8080
+        targetPort: 8080
+      selector:
+        app: api-device
+```
