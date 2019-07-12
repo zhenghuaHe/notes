@@ -47,7 +47,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/configuration-snippet: |　　
-      rewrite /api-admin/(.*)  /$1  break;
+      rewrite /api-admin/(.*)  /$1  break;                 # 重新连接，去掉多于的/api-admin
 spec:
   rules:
   - host: dev.lift360.cn
