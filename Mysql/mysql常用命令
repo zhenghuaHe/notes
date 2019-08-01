@@ -15,7 +15,7 @@ show processlist;
 　
 
 远程备份：
-mysqldump -h172.16.1.200 -P2000 -uttd -pmFnzGYwHlepMzDR8wJxG  ttd >ttd_back.sql
+mysqldump -h172.16.1.200 -P2000 -uttd -p12345.  ttd >ttd_back.sql
 
 指定表备份
 mysqldump -u user -p db tab1 tab2 > db.sql
