@@ -237,3 +237,106 @@ kubectl set image deployment/$baseimage_name  *=172.16.1.200:5000/$baseimage_nam
 
 
 ```
+
+
+
+* 范例三
+```
+pipeline {
+    agent { label '201' }
+
+    parameters{
+
+        choice(
+            choices: 'deploy\nrollback',
+            description: '',
+            name: 'status'
+            )
+        string(name: 'version', defaultValue: '0', description: '')
+    }
+
+    stages {
+        stage('GitPull') {
+            steps {
+                timeout(time: 3, unit: 'MINUTES') {
+                    retry(5) {
+                        sh 'echo "this is a test"'
+                    }
+                }
+                git branch: 'dev',credentialsId: 'e5d42737-054c-4473-b6ef-5462a10a50a8', url: 'git@git.mwteck.com:lqz/api-device.git'
+
+            }
+        }
+
+        stage('Choice'){
+            when{
+                expression {params.status == "rollback"}
+            }
+            steps{
+                sh 'git checkout $version'
+            }
+        }
+        stage('Package'){
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('build_images'){
+            steps{
+                sh '/home/jenkins/docker_build_test/build_project.sh ${WORKSPACE}'
+            }
+        }
+
+
+    }
+
+    post {
+        always {
+            echo 'One way or another, I have finished'
+            //deleteDir() /* clean up our workspace */
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }
+}
+
+
+
+$ cat /home/jenkins/docker_build_test/build_project.sh
+#!/bin/bash
+datenow=$(date +%Y-%m-%d-%H-%M-%S)
+base_name=$(basename $1)
+baseimage_name=$(basename $base_name|awk -F '_' '{print $2}')
+if [ -d "/home/jenkins/workspace/$base_name/target/$baseimage_name" ];then
+
+	cp -a /home/jenkins/workspace/$base_name/target/$baseimage_name/* /home/jenkins/docker_build_test/$base_name/$baseimage_name/
+	if [ $? -eq 0 ];then
+		echo "解压程序到Dockerfile目录成功"
+	fi
+	if [ -f "/home/jenkins/docker_build_test/$base_name/$baseimage_name/WEB-INF/classes/log4j.properties" ];then
+	cp -a /home/jenkins/docker_build_test/$base_name/log4j.properties /home/jenkins/docker_build_test/$base_name/$baseimage_name/WEB-INF/classes/log4j.properties
+		if [ $? -eq 0 ];then
+
+		echo "替换日志配置文件成功"
+		fi
+	fi
+
+	echo "开始构建最新生产镜像"
+	cd /home/jenkins/docker_build_test/$base_name/
+	docker build -t 172.16.1.200:5000/$baseimage_name:test_$datenow .
+	docker push 172.16.1.200:5000/$baseimage_name:test_$datenow
+	kubectl set image deployment/$baseimage_name *=172.16.1.200:5000/$baseimage_name:test_$datenow -n t3
+fi
+
+```
