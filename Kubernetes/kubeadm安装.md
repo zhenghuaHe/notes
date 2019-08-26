@@ -1,35 +1,17 @@
+# Kubernetes-kubeadm安装
 
+* 准备
+```
+$ systemctl stop firewalld
+$ systemctl disable firewalld
 
-准备：
-
-systemctl stop firewalld
-systemctl disable firewalld
-
-setenforce  0
-sed -i "s/^SELINUX=enforcing/SELINUX=disabled/g" /etc/sysconfig/selinux
-sed -i "s/^SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-阿里的镜像源：
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+$ setenforce  0
+$ sed -i "s/^SELINUX=enforcing/SELINUX=disabled/g" /etc/sysconfig/selinux
+$ sed -i "s/^SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
+```
+* 阿里的镜像源
+```
+$ cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
 baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
@@ -41,10 +23,11 @@ EOF
 
 # 安装
 yum install -y kubelet kubeadm kubectl ipvsadm
+```
 
-
-
-[root@master ~]# kubeadm init \
+* 初始化
+```
+$ kubeadm init \
 > --kubernetes-version=v1.13.2 \
 > --pod-network-cidr=10.244.0.0/16 \
 > --service-cidr=10.96.0.0/12 \
@@ -73,32 +56,18 @@ error execution phase preflight: [preflight] Some fatal errors occurred:
 , error: exit status 1
 [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
 
+# 根据报错修改重新初始化
+
+$ kubeadm init --kubernetes-version=v1.13.2 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --apiserver-advertise-address=0.0.0.0 --ignore-preflight-errors=Swap
 
 
 
- mv sa.pub /etc/kubernetes/pki/
- mv sa.key /etc/kubernetes/pki/
- mv front-proxy-ca.crt /etc/kubernetes/pki/
- mv front-proxy-ca.key /etc/kubernetes/pki/
- mv etcd-ca.crt /etc/kubernetes/pki/etcd/ca.crt
- mv etcd-ca.key /etc/kubernetes/pki/etcd/ca.key
- mv admin.conf /etc/kubernetes/admin.con
-
-
-
-
-
-
-kubeadm init --kubernetes-version=v1.13.2 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --apiserver-advertise-address=0.0.0.0 --ignore-preflight-errors=Swap
-
-
-
-kubeadm init \
+$ kubeadm init \
 > --kubernetes-version=v1.13.0 \
 > --pod-network-cidr=10.244.0.0/16 \
 > --service-cidr=10.96.0.0/12 \
 > --apiserver-advertise-address=0.0.0.0 \
-> --ignore-preflight-errors=Swap
+> --ignore-preflight-errors=Swap          # 和上面二选一
 
 
 
@@ -118,3 +87,4 @@ You can now join any number of machines by running the following on each node
 as root:
 
   kubeadm join 192.168.1.10:6443 --token c6zlqr.pis02ro5hremh24l --discovery-token-ca-cert-hash sha256:b9ad05d049c20a21c974c1c9aedd14be1a427a336f670e46d42d139512731ee5
+```

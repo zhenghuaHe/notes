@@ -1,7 +1,7 @@
+# kubernetes高可用安装
 
-
-1、准备工作
-
+* 准备工作
+```
 systemctl stop firewalld
 systemctl disable firewalld
 
@@ -32,17 +32,20 @@ gpgcheck=1
 repo_gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
+```
+* 安装基础包
+```
+$ yum install -y epel-release
+$ yum install -y yum-utils device-mapper-persistent-data lvm2 net-tools conntrack-tools wget vim  ntpdate libseccomp libtool-ltdl
+```
 
-yum install -y epel-release
-yum install -y yum-utils device-mapper-persistent-data lvm2 net-tools conntrack-tools wget vim  ntpdate libseccomp libtool-ltdl
 
-
-
-
-systemctl enable ntpdate.service
+* 其他配置
+```
+$ systemctl enable ntpdate.service
 echo '*/30 * * * * /usr/sbin/ntpdate time7.aliyun.com >/dev/null 2>&1' > /tmp/crontab2.tmp
 crontab /tmp/crontab2.tmp
-systemctl start ntpdate.service
+$ systemctl start ntpdate.service
 
 
 echo "* soft nofile 65536" >> /etc/security/limits.conf
@@ -51,10 +54,11 @@ echo "* soft nproc 65536"  >> /etc/security/limits.conf
 echo "* hard nproc 65536"  >> /etc/security/limits.conf
 echo "* soft  memlock  unlimited"  >> /etc/security/limits.conf
 echo "* hard memlock  unlimited"  >> /etc/security/limits.conf
+```
 
-
-２、安装etcd
-yum install etcd　-y
+* 安装etcd
+```
+$ yum install etcd　-y
 [root@node01 ~]# grep -v "^#" /etc/etcd/etcd.conf
 ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
 ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"
@@ -62,22 +66,22 @@ ETCD_NAME="master_etcd"
 ETCD_INITIAL_ADVERTISE_PEER_URLS="http://172.16.1.218:2380"
 ETCD_ADVERTISE_CLIENT_URLS="http://172.16.1.218:2379"
 ETCD_INITIAL_CLUSTER="master_etcd=http://172.16.1.218:2380"
+```
 
+* 安装docker
+```
+$ yum install https://mirrors.aliyun.com/docker-ce/linux/centos/7/x86_64/stable/Packages/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm  -y
+$ yum install https://mirrors.aliyun.com/docker-ce/linux/centos/7/x86_64/stable/Packages/docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  -y
 
-3、安装docker
-yum install https://mirrors.aliyun.com/docker-ce/linux/centos/7/x86_64/stable/Packages/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm  -y
-yum install https://mirrors.aliyun.com/docker-ce/linux/centos/7/x86_64/stable/Packages/docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  -y
+$ systemctl start docker
+```
 
-systemctl start docker
+* 安装kube包
+```
+$ yum install -y kubeadm-1.10.5 kubectl-1.10.5 kubelet-1.10.5
 
+```
 
-
-yum install -y kubeadm-1.10.5 kubectl-1.10.5 kubelet-1.10.5
-
-
-
-
-４、
 
 
 
