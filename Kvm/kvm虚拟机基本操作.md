@@ -25,7 +25,9 @@ $ virt-install --virt-type=kvm --name=tpl_centos7 --vcpus=8 --memory=8096 --loca
 ```
 
 - 新建一个磁盘
-`qemu-img create -f qcow2 kvm-clone.qcow2 2G`
+```
+$ qemu-img create -f qcow2 kvm-clone.qcow2 2G
+```
 
 - 克隆
 ```
@@ -66,11 +68,12 @@ virsh autostart --disable kvm-name  #取消随宿主机开机自启动
 
 
 - 链接虚拟机：
+```
    1. 通过控制窗口登录虚拟机
-   - `$ virsh console kvm-name`
+   $ virsh console kvm-name
    ２. 通过ssh去链接
-   - `$ ssh root@xx.xx.xx.xx`
-
+   $ ssh root@xx.xx.xx.xx
+```
 
 - 查看虚拟机信息：
 ```
