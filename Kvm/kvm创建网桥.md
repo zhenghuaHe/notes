@@ -1,15 +1,18 @@
-修改对应的网卡的配置信息：
+# kvm创建网桥
 
+* 修改对应的网卡的配置信息
+```
 $ cat ifcfg-em3
 TYPE=Ethernet
 NAME=em3
 DEVICE=em3
 ONBOOT=yes
 BRIDGE=br_wan
+```
 
 
-
-新增配置文件：
+* 新增配置文件
+```
 $ cat ifcfg-br_wan
 DEVICE=br_wan
 STP=no
@@ -33,3 +36,4 @@ PREFIX=24
 GATEWAY=172.16.1.1
 DNS1=223.5.5.5
 DNS2=223.6.6.6
+```
