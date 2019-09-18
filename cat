@@ -1,2 +1,0 @@
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:ROOT@mwteck123@172.16.1.210:3306/ttd'
-
