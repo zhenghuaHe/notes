@@ -70,6 +70,8 @@ $ kubectl get services --all-namespaces
 # 通过lable查询
 $ kubectl get pods -l app=nginx -o yaml|grep podIP
 
+# 指定配置文件查询
+$ kubectl --kubeconfig=./kubeconfig get nodes
 # 当我们发现一个pod迟迟无法创建时，可以使用describe来查看详细信息。
 $ kubectl describe pod xxx
 ```
