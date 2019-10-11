@@ -68,3 +68,11 @@ spec:
           servicePort: 8080
 
 ```
+
+- 请求
+
+```
+1. 解析dev.lift360.cn到node的IP
+curl http://dev.lift360.cn:30080/api-admin
+
+```
