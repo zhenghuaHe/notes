@@ -1,6 +1,0 @@
-编辑mysql配置文件my.cnf
-
-在[mysqld]下添加一行
-
-#0区分大小写，1不区分大小写
- lower_case_table_names=1

@@ -1,8 +1,0 @@
-
-
-## k8s监控思路
-***
-* 通过监控nginx的状态码来确定每个访问环境是否出了问题
-* 关于访问状态码，在nginx里面编译加入nginx-module-vts模块，通过添加配置文件去获取他的数据，安装nginx-vts-exporter将数据上报给prometheus
-* 其他节点直接添加node-node_exporter获取数据
-***
