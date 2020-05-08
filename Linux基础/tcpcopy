@@ -1,0 +1,21 @@
+
+
+
+
+tcpcopy:
+
+
+
+/usr/local/tcpcopy/sbin/tcpcopy -x 8080-172.16.1.220:8080 -s 172.16.1.221 -c 172.16.100.x -d -C 4 -l /usr/local/tcpcopy/logs/tcpcopy.log
+
+
+
+route add -net 172.16.100.0 netmask 255.255.255.0 gw 172.16.1.221
+
+
+
+/usr/local/intercept/sbin/intercept -i eth0 -l /usr/local/intercept/logs/intercept.log -F 'tcp and src host 172.16.1.220 and src port 8080' -d
+
+
+udpcopy:
+udpcopy -x 1025-172.16.1.220:1025

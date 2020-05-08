@@ -1,0 +1,81 @@
+
+==== 获取镜像
+[source,bash]
+----
+＃创建数据卷
+#!/bin/bash
+
+/usr/bin/docker volume create jenkins_volume
+
+/usr/bin/docker run \
+   -d \
+   --restart always \
+   --env LANG=en_US.UTF-8 \
+   --env TZ=Asia/Shanghai \
+   -h  jenkins \
+   -p 1024:8080 \
+   -p 1025:50000 \
+   --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
+   -v jenkins_volume:/usr/local/jenkins \
+   --name jenkins \
+   jenkins/jenkins:lts
+
+----
+
+docker  run -itd -p 2024:8080 -p 2025:50000 --name jenkins_pro  -v /etc/localtime:/etc/localtime -v /home/jenkins-home-docker:/var/jenkins_home --restart=always jenkins/jenkins:lts
+
+docker run -tid --name emqx -p 1883:1883 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 -v /etc/localtime:/etc/localtime --restart=always emqx/emqx:latest
+
+#查看历史版本
+yum --showduplicate list docker-ce
+
+#安装指定版本
+yum makecache fast && yum -y install docker-ce-18.06.0.ce-3.el7
+
+- 镜像的导出导入
+docker save f45277861b04 > /root/mysql.tar
+
+docker load < /root/mysql.tar
+docker tag f45277861b04 mysql:latest
+
+
+  docker load < coredns.tar
+  docker load < kube-apiserver-amd64.tar
+  docker load < kube-controller-manager-amd64.tar
+  docker load < kube-proxy-amd64.tar
+  docker load < kube-scheduler-amd64.tar
+  docker load < pause.tar
+
+  docker tag be5a6e1ecfa6 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-proxy-amd64:v1.11.3
+  docker tag a710d6a92519 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-controller-manager-amd64:v1.11.3
+  docker tag 3de571b6587b registry.cn-hangzhou.aliyuncs.com/google_containers/kube-apiserver-amd64:v1.11.3
+  docker tag ca1f38854f74 registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler-amd64:v1.11.3
+  docker tag b3b94275d97c registry.cn-hangzhou.aliyuncs.com/google_containers/coredns:1.1.3
+  docker tag da86e6ba6ca1 registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1
+
+
+  docker save ab60b017e34f > kube-apiserver-amd64.tar
+  docker save  07e068033cf2 > kube-controller-manager-amd64.tar
+  docker save 9c3a9d3f09a0 > kube-proxy-amd64.tar
+  docker save  5a1527e735da > kube-scheduler-amd64.tar
+
+docker tag 9c3a9d3f09a0 k8s.gcr.io/kube-proxy-amd64:v1.12.0
+docker tag ab60b017e34f k8s.gcr.io/kube-apiserver-amd64:v1.12.0
+docker tag 07e068033cf2 k8s.gcr.io/kube-controller-manager-amd64:v1.12.0
+docker tag 5a1527e735da k8s.gcr.io/kube-scheduler-amd64:v1.12.0
+
+
+
+
+
+docker tag e9a1134ab5aa k8s.gcr.io/kube-proxy-amd64:v1.11.7
+docker tag d82b2643a56a k8s.gcr.io/kube-apiserver-amd64:v1.11.7
+docker tag 93fb4304c50c k8s.gcr.io/kube-controller-manager-amd64:v1.11.7
+docker tag 52ea1e0a3e60 k8s.gcr.io/kube-scheduler-amd64:v1.11.7
+
+
+
+docker rmi k8s.gcr.io/kube-proxy:v1.11.7
+docker rmi k8s.gcr.io/kube-apiserver:v1.11.7
+docker rmi k8s.gcr.io/kube-controller-manager:v1.11.7
+docker rmi k8s.gcr.io/kube-scheduler:v1.11.7

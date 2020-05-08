@@ -1,0 +1,10 @@
+
+#安装
+$ sudo pacman -S teamviewer
+
+#安装之后就可以在系统里找到他的图标开始使用，但是会一直报错无网络（其实主机是有网的），那是因为没有让他的进程一直启用。
+
+$ sudo systemctl start teamviewerd
+$ sudo systemctl enable teamviewerd
+
+即可解决。

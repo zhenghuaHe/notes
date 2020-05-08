@@ -1,0 +1,137 @@
+﻿支持centos6注意
+	febootstrap和supermin不同
+
+	http://libguestfs.org/supermin.1.html
+
+
+yum -y install docker-io
+service docker start
+yum -y install febootstrap 制作docker镜像工具
+第三步：作CentOS镜像文件centos6-image目录
+	  -i 后面的都是基础镜像中安装的一些服务
+
+      febootstrap -i bash -i wget -i yum -i iputils -i iproute -i man -i vim -i openssh-server -i openssh-clients -i tar -i gzip centos6 centos6-image http://mirrors.aliyun.com/centos/6/os/x86_64/
+
+
+	  centos6是指版本，centos6-image是生成的目录名称。
+
+
+维护root的环境变量
+	  cd centos6-image && cp etc/skel/.bash* root/
+
+
+
+
+cd centos6-image && tar -c .|docker import - centos6-base
+
+docker run -h mysql57 -d  -p 3306:3306 --name mysql57  mwteck/centos6:20180126b1  /bin/bash
+
+
+
+
+docker run -d -p 482:8080 -i -t  -v /data/web/:/data/web --name ttd.api_login   registry.cn-hangzhou.aliyuncs.com/okuc/centos6.6-jdk1.7-ssh  /bin/bash
+
+docker run -h elk -d -p 4022:22 -p  -p 4601:5601 -p 4100:9100 -p 4200:9200 -p 4300:9300   -it -v /data/elk:/data/elk --name mwteck_elk  mwteck/centos6:20180126b1  /bin/bash
+
+docker
+支持centos7
+supermin --prepare bash -o /tmp/supermin.d
+
+		--prepare  安装bash
+
+		注意检查 supaermin.d   下面的pageckge
+
+
+supermin --build --format ext2 supermin.d -o appliance.d
+
+添加yum的releasever
+echo 7 > appliance.d/etc/yum/vars/releasever
+
+
+
+打包
+tar --numeric-owner -cpf centos-7.tar -C appliance.d .
+cat centos-7.tar | docker import - kongxx/centos-7
+
+
+维护root的环境变量
+	  cd centos6-image && cp etc/skel/.bash* root/
+
+注意:
+	如果上面prepare安装了openssh-server
+	dockerfile 需要useradd -s /sbin/onlogin -d /var/empty/sshd -r sshd
+
+
+
+
+docker login --username=mwteck2016 --password=MWteck@2018 registry.cn-shanghai.aliyuncs.com
+
+
+
+
+
+docker  run -itd --name api-python-admin -p 18010:9090   -v /home/ttd/api-python-admin/configs/:/data/web/api-python-admin/configs/ -v /home/ttd/api-python-admin/log/:/data/web/api-python-admin/var/log/ registry.cn-shanghai.aliyuncs.com/mwteck/api-python-admin:20180913_15
+
+
+docker  run -itd --name api-ttd-xcx -p 18013:9090  -v /etc/localtime:/etc/localtime -v /home/ttd/api-ttd-xcx/configs/:/data/web/api-tss -nd-xcx/configs/  -v /home/ttd/api-ttd-xcx/log/:/data/web/api-ttd-xcx/var/log/ registry.cn-shanghai.aliyuncs.com/mwteck/api-ttd-xcx:20180913_18
+
+
+docker  run -itd --name api-maintenance-erp -p 18011:9090  -v /etc/localtime:/etc/localtime -v /home/ttd/api-maintenance-erp/configs/:/data/web/api-maintenance-erp/configs/ -v /data2/var/lib/docker/volumes/ttd_prod_data_web/_data/web/static/files/:/data/web/static/files/ -v /home/ttd/api-maintenance-erp/log/:/data/web/api-maintenance-erp/var/log/ registry.cn-shanghai.aliyuncs.com/mwteck/api-maintenance-erp:20180913_03
+
+
+最后版本线上：　蓝鲸
+docker  run -itd --name api-blue-whale -p 18012:9090  -v /etc/localtime:/etc/localtime -v /home/ttd/api-blue-whale/configs/:/data/web/api-blue-whale/configs/  -v /home/ttd/api-blue-whale/log/:/data/web/api-blue-whale/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_blue_whale:20180919_21
+
+
+
+
+
+曲速引擎：   记得创建目录
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
+docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api-warp-drive:20180917_14
+docker  run -itd --name api-warp-drive -p 18014:8080  -v /etc/localtime:/etc/localtime -v /home/ttd/api-warp-drive/configs/:/data/web/api-warp-drive/configs/   -v /home/ttd/api-warp-drive/log/:/data/web/api-warp-drive/var/log/ -v /home/ttd/api-warp-drive/excel_file:/data/web/api-warp-drive/excel_file/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api-warp-drive:20180919_19
+
+
+
+docker  run -itd --name api-vcube-python -p 8888:8888  -v /etc/localtime:/etc/localtime -v /home/ttd/api-vcube-python/configs/:/data/web/api-vcube-python/configs/   -v /home/ttd/api-vcube-python/log/:/data/web/api-vcube-python/var/log/  --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/t4:api_vcube_python
+
+
+
+
+
+同步程序：
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
+docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_2012iot_statistics_python:20180918_16
+docker  run -itd --name api-python-statistics   -v /etc/localtime:/etc/localtime -v /home/ttd/api-2012iot-statistics-python/configs/:/data/web/api-2012iot-statistics-python/configs/  -v /home/ttd/api-2012iot-statistics-python/log/:/data/web/api-2012iot-statistics-python/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_2012iot_statistics_python:20180919_15
+
+大数据平台设备中心
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
+docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_bigdatadevicecenter:20180919_15
+docker  run -itd --name api-bigdatadevicecenter -p 18015:8080  -v /etc/localtime:/etc/localtime -v /home/ttd/api-bigdatadevicecenter/configs/:/data/web/api-bigdatadevicecenter/configs/  -v /home/ttd/api-bigdatadevicecenter/log/:/data/web/api-bigdatadevicecenter/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_bigdatadevicecenter:20180919_15
+
+
+
+
+redis-tools:
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
+docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_redis_tools:20180928_16
+docker  run -itd --name api_redis_tools   -v /etc/localtime:/etc/localtime -v /home/ttd/api-redis-tools/configs/:/data/web/api-redis-tools/configs/  -v /home/ttd/api-redis-tools/log/:/data/web/api-redis-tools/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_redis_tools:20180928_15
+
+
+api-cache:
+docker login --username=mwteck26 --password=MWteck@28 registry.cn-shanghai.aliyuncs.com
+docker pull registry.cn-shanghai.aliyuncs.com/mwteck/api_cache:20181008_15
+docker  run -itd --name api_cache_sync   -v /etc/localtime:/etc/localtime -v /home/ttd/api-cache-sync/configs/:/data/web/api-cache-sync/configs/  -v /home/ttd/api-cache-sync/log/:/data/web/api-cache-sync/var/log/ --restart=always registry.cn-shanghai.aliyuncs.com/mwteck/api_cache:20181008_15
+
+
+
+
+
+
+wget -c https://github.com/wingify/lua-resty-rabbitmqstomp/blob/master/lib/resty/rabbitmqstomp.lua  -o /usr/local/openresty/lualib/resty/rabbitmqstomp.lua`
+
+
+
+
+docker  run -itd --name t1_mq -p 5673:5672 -p 15673:15672  -v /etc/localtime:/etc/localtime  --restart=always rabbitmq:management
+docker  run -itd --name t2_mq -p 5674:5672 -p 15674:15672  -v /etc/localtime:/etc/localtime  --restart=always rabbitmq:management

@@ -1,0 +1,89 @@
+- 因业务需要，现要给yum安装的nginx进行一次升级，增加需要的模块
+
+$ yum -y install gcc gcc-c++ make libtool zlib zlib-devel  openssl-devel pcre-devel #安装编译需要的包
+$ wget http://nginx.org/download/nginx-1.12.2.tar.gz #下载和自己同版本的文件来编译
+$ tar -xzvf nginx-1.12.2.tar.gz
+$ cd nginx-1.12.2
+$ git clone git://github.com/vozlt/nginx-module-vts.git #　拉取自己需要增加的模块
+
+$ nginx -V   #查看之前安装时加载的模块
+nginx version: nginx/1.12.2
+built by gcc 4.8.5 20150623 (Red Hat 4.8.5-28) (GCC)
+built with OpenSSL 1.0.2k-fips  26 Jan 2017
+TLS SNI support enabled
+configure arguments: --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body --http-proxy-temp-path=/var/lib/nginx/tmp/proxy --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi --http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi --http-scgi-temp-path=/var/lib/nginx/tmp/scgi --pid-path=/run/nginx.pid --lock-path=/run/lock/subsys/nginx --user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_auth_request_module --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module=dynamic --with-http_image_filter_module=dynamic --with-http_geoip_module=dynamic --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module --with-http_perl_module=dynamic --with-mail=dynamic --with-mail_ssl_module --with-pcre --with-pcre-jit --with-stream=dynamic --with-stream_ssl_module --with-google_perftools_module --with-debug --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic' --with-ld-opt='-Wl,-z,relro -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E'
+
+
+$ ./configure --prefix=/usr/share/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/var/lib/nginx/tmp/client_body --http-proxy-temp-path=/var/lib/nginx/tmp/proxy --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi --http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi --http-scgi-temp-path=/var/lib/nginx/tmp/scgi --pid-path=/run/nginx.pid --lock-path=/run/lock/subsys/nginx --user=nginx --group=nginx --with-file-aio --with-ipv6 --with-http_auth_request_module --with-http_ssl_module --with-http_v2_module --with-http_realip_module --with-http_addition_module --with-http_xslt_module=dynamic --with-http_image_filter_module=dynamic --with-http_geoip_module=dynamic --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_slice_module --with-http_stub_status_module --with-http_perl_module=dynamic --with-mail=dynamic --with-mail_ssl_module --with-pcre --with-pcre-jit --with-stream=dynamic --with-stream_ssl_module --with-google_perftools_module --with-debug --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -m64 -mtune=generic' --with-ld-opt='-Wl,-z,relro -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E' --add-module=/usr/local/nginx-module-vts   #重新编译并在追后追加自己需要的模块
+
+$ make　#make一下生成二进制文件而不要make install
+$ cp /usr/sbin/nginx /usr/sbin/nginx.bak  #给原本的nginx备份
+$ systemctl stop nginx
+$ cp ./objs/nginx /usr/sbin/nginx　　　　　＃把我们编译出来的二进制文件拷过去
+$ systemctl start nginx
+
+$ nginx -V　　＃在已加载的模块里面能看到我们新加的模块了
+
+$　vim /etc/nginx/nginx.conf　#增加配置项来验证
+http {
+
+    vhost_traffic_status_zone;
+    vhost_traffic_status_filter_by_host on;
+    server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        server_name  _;
+        root         /usr/share/nginx/html;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        location / {
+        }
+        location /status {
+               vhost_traffic_status_display;
+               vhost_traffic_status_display_format html;
+        }
+}
+$ curl 127.0.0.1/status　　＃会有东西返回，在浏览器查看有页面
+
+
+
+
+FQA:
+1.错误一
+$ ./configure: error: the invalid value in --with-ld-opt="-Wl,-z,relro -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E"
+解决： yum install redhat-rpm-config
+
+2.错误二
+$ ./configure: error: the HTTP XSLT module requires the libxml2/libxslt libraries. You can either do not enable the module or install the libraries.
+解决： yum install libxslt-devel
+
+3.错误三
+$ ./configure: error: the HTTP image filter module requires the GD library.You can either do not enable the module or install the libraries.
+解决： yum install gd-devel
+
+4.错误四
+$ ./configure: error: perl module ExtUtils::Embed is required
+解决： yum install perl-ExtUtils-Embed
+
+5.错误五
+$ ./configure: error: the GeoIP module requires the GeoIP library.You can either do not enable the module or install the library.
+解决： yum install geoip-devel
+
+6.错误六
+$ ./configure: error: the Google perftools module requires the Google perftools library. You can either do not enable the module or install the library.
+解决： yum install gperftools-devel
+
+7.错误七
+$ ./configure: warning: the "--with-ipv6" option is deprecated
+解决： 系统已经关闭了ipv6.
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+
+8.错误八
+$ nginx: [alert] version 1.12.2 of nginx.pm is required, but 1.14.0 was found
+解决: 在升级nginx时候，/usr/local/lib64/perl5目录下已经存在了nginx.pm，它里面记录了nginx的版本号。所以，如果启动nginx的时候，运行的nginx与nginx.pm版本号不一致就有问题，特别是升级nginx，或者一台机器上部署了多个nginx。
+办法：
+rm -rf  /usr/local/lib64/perl5/nginx.pm
